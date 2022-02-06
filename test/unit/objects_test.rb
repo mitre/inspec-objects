@@ -480,6 +480,73 @@ end
           name: "key2",
           value: %w{a b},
         }],
+        post_body: ""
+      }
+      _(control.to_hash).must_equal control_hash
+    end
+  end
+
+    describe "Inspec::Object::PostBody" do
+    it "constructs a control with a simple post body" do
+      control = Inspec::Object::Control.new
+      control.id = "tag.control.id"
+      control.add_post_body('my body')
+      _(control.to_ruby).must_equal '
+control "tag.control.id" do
+  my body
+end
+'.strip
+
+      control_hash = {
+        id: "tag.control.id",
+        title: nil,
+        descriptions: {},
+        impact: nil,
+        tests: [],
+        tags: [],
+        post_body: "my body"
+      }
+      _(control.to_hash).must_equal control_hash
+    end
+  end
+
+      describe "Inspec::Object::PostBody" do
+    it "constructs a control with a complex post body" do
+      control = Inspec::Object::Control.new
+      control.id = "tag.control.id"
+      control.add_post_body(%q(unless package('gnome-settings-daemon').installed?
+  impact 0.0
+  describe "The system does not have GNOME installed" do
+    skip "The system does not have GNOME installed, this requirement is Not Applicable."
+  end
+else 
+  describe command("gsettings get org.gnome.settings-daemon.media-keys logout") do
+    its('stdout.strip') { should cmp "''" }
+  end 
+end))
+      _(control.to_ruby).must_equal %q(
+control "tag.control.id" do
+  unless package('gnome-settings-daemon').installed?
+    impact 0.0
+    describe "The system does not have GNOME installed" do
+      skip "The system does not have GNOME installed, this requirement is Not Applicable."
+    end
+  else 
+    describe command("gsettings get org.gnome.settings-daemon.media-keys logout") do
+      its('stdout.strip') { should cmp "''" }
+    end 
+  end
+end
+).strip
+
+      control_hash = {
+        id: "tag.control.id",
+        title: nil,
+        descriptions: {},
+        impact: nil,
+        tests: [],
+        tags: [],
+        post_body: "unless package('gnome-settings-daemon').installed?\n  impact 0.0\n  describe \"The system does not have GNOME installed\" do\n    skip \"The system does not have GNOME installed, this requirement is Not Applicable.\"\n  end\nelse \n  describe command(\"gsettings get org.gnome.settings-daemon.media-keys logout\") do\n    its('stdout.strip') { should cmp \"''\" }\n  end \nend"
       }
       _(control.to_hash).must_equal control_hash
     end

@@ -1,11 +1,14 @@
+# frozen_string_literal: true
+
 module Inspec::Object
   class Control
-    attr_accessor :id, :title, :descriptions, :impact, :tests, :tags, :refs, :only_if
+    attr_accessor :id, :title, :descriptions, :impact, :tests, :post_body, :tags, :refs, :only_if
     def initialize
       @tests = []
       @tags = []
       @refs = []
       @descriptions = {}
+      @post_body = ''
     end
 
     def add_test(t)
@@ -16,6 +19,10 @@ module Inspec::Object
       @tags.push(t)
     end
 
+    def add_post_body(post_body)
+      @post_body = post_body
+    end
+
     def to_hash
       {
         id: id,
@@ -24,15 +31,16 @@ module Inspec::Object
         impact: impact,
         tests: tests.map(&:to_hash),
         tags: tags.map(&:to_hash),
+        post_body: post_body
       }
     end
 
-    def to_ruby # rubocop:disable Metrics/AbcSize
+    def to_ruby
       res = ["control #{id.inspect} do"]
       res.push "  title #{title.inspect}" unless title.to_s.empty?
       descriptions.each do |label, text|
         if label == :default
-          next if text.nil? || (text == "") # don't render empty/nil desc
+          next if text.nil? || (text == '') # don't render empty/nil desc
 
           res.push "  desc  #{prettyprint_text(text, 2)}"
         else
@@ -44,7 +52,8 @@ module Inspec::Object
       refs.each { |t| res.push("  ref   #{print_ref(t)}") }
       res.push "  only_if { #{only_if} }" if only_if
       tests.each { |t| res.push(indent(t.to_ruby, 2)) }
-      res.push "end"
+      res.push(indent(post_body, 2)) unless post_body.nil? || post_body.empty?
+      res.push 'end'
       res.join("\n")
     end
 
@@ -54,7 +63,7 @@ module Inspec::Object
       return x.inspect if x.is_a?(String)
       raise "Cannot process the ref: #{x}" unless x.is_a?(Hash)
 
-      "(" + x.inspect + ")"
+      '(' + x.inspect + ')'
     end
 
     # Pretty-print a text block of InSpec code
@@ -67,11 +76,11 @@ module Inspec::Object
       return txt unless txt.include?("\n")
 
       middle = indent(txt[1..-2], depth + 2)
-      txt[0] + "\n" + middle + "\n" + " " * depth + txt[-1]
+      txt[0] + "\n" + middle + "\n" + ' ' * depth + txt[-1]
     end
 
     def indent(txt, d)
-      dt = " " * d
+      dt = ' ' * d
       dt + txt.gsub("\n", "\n" + dt)
     end
   end
