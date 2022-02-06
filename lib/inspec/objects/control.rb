@@ -1,11 +1,18 @@
+# frozen_string_literal: true
+
 module Inspec::Object
   class Control
-    attr_accessor :id, :title, :descriptions, :impact, :tests, :tags, :refs, :only_if
+    attr_accessor :header, :id, :title, :descriptions, :impact, :tests, :tags, :refs, :only_if
     def initialize
+      @header = ''
       @tests = []
       @tags = []
       @refs = []
       @descriptions = {}
+    end
+
+    def add_header(header)
+      @header = header
     end
 
     def add_test(t)
@@ -18,21 +25,28 @@ module Inspec::Object
 
     def to_hash
       {
+        header: header,
         id: id,
         title: title,
         descriptions: descriptions,
         impact: impact,
         tests: tests.map(&:to_hash),
-        tags: tags.map(&:to_hash),
+        tags: tags.map(&:to_hash)
       }
     end
 
-    def to_ruby # rubocop:disable Metrics/AbcSize
-      res = ["control #{id.inspect} do"]
+    def to_ruby
+      if header.empty? || header.nil? || header == []
+        res = ["control #{id.inspect} do"]
+      else
+        res = []
+        res.push header
+        res.push "control #{id.inspect} do"
+      end
       res.push "  title #{title.inspect}" unless title.to_s.empty?
       descriptions.each do |label, text|
         if label == :default
-          next if text.nil? || (text == "") # don't render empty/nil desc
+          next if text.nil? || (text == '') # don't render empty/nil desc
 
           res.push "  desc  #{prettyprint_text(text, 2)}"
         else
@@ -44,7 +58,7 @@ module Inspec::Object
       refs.each { |t| res.push("  ref   #{print_ref(t)}") }
       res.push "  only_if { #{only_if} }" if only_if
       tests.each { |t| res.push(indent(t.to_ruby, 2)) }
-      res.push "end"
+      res.push 'end'
       res.join("\n")
     end
 
@@ -54,7 +68,7 @@ module Inspec::Object
       return x.inspect if x.is_a?(String)
       raise "Cannot process the ref: #{x}" unless x.is_a?(Hash)
 
-      "(" + x.inspect + ")"
+      '(' + x.inspect + ')'
     end
 
     # Pretty-print a text block of InSpec code
@@ -67,11 +81,11 @@ module Inspec::Object
       return txt unless txt.include?("\n")
 
       middle = indent(txt[1..-2], depth + 2)
-      txt[0] + "\n" + middle + "\n" + " " * depth + txt[-1]
+      txt[0] + "\n" + middle + "\n" + ' ' * depth + txt[-1]
     end
 
     def indent(txt, d)
-      dt = " " * d
+      dt = ' ' * d
       dt + txt.gsub("\n", "\n" + dt)
     end
   end

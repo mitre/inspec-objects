@@ -1,13 +1,15 @@
-require "spec_helper"
-require "inspec-objects"
+# frozen_string_literal: true
 
-describe "Objects" do
-  describe "Inspec::Object::Test" do
+require 'spec_helper'
+require 'inspec-objects'
+
+describe 'Objects' do
+  describe 'Inspec::Object::Test' do
     let(:obj) { Inspec::Object::Test.new }
     it 'constructs a simple resource + its("argument")' do
-      obj.qualifier = [["resource"], ["version"]]
-      obj.matcher = "cmp >="
-      obj.expectation = "2.4.2"
+      obj.qualifier = [['resource'], ['version']]
+      obj.matcher = 'cmp >='
+      obj.expectation = '2.4.2'
       _(obj.to_ruby).must_equal '
 describe resource do
   its("version") { should cmp >= "2.4.2" }
@@ -16,11 +18,11 @@ end
     end
 
     # same as the above test but with it
-    it "constructs a simple resource.argument" do
+    it 'constructs a simple resource.argument' do
       # [''] forces an 'it' instead of 'its':
-      obj.qualifier = [["resource"], ["version"], [""]]
-      obj.matcher = "cmp >="
-      obj.expectation = "2.4.2"
+      obj.qualifier = [['resource'], ['version'], ['']]
+      obj.matcher = 'cmp >='
+      obj.expectation = '2.4.2'
       _(obj.to_ruby).must_equal '
 describe resource.version do
   it { should cmp >= "2.4.2" }
@@ -28,10 +30,10 @@ end
 '.strip
     end
 
-    it "constructs a simple resource+argument with to_s" do
-      obj.qualifier = [["resource"], ["to_s"]]
-      obj.matcher = "cmp"
-      obj.expectation = Regexp.new("^Desc.+$")
+    it 'constructs a simple resource+argument with to_s' do
+      obj.qualifier = [['resource'], ['to_s']]
+      obj.matcher = 'cmp'
+      obj.expectation = Regexp.new('^Desc.+$')
       _(obj.to_ruby).must_equal '
 describe resource.to_s do
   it { should cmp(/^Desc.+$/) }
@@ -39,9 +41,9 @@ end
 '.strip
     end
 
-    it "constructs a simple resource+argument with to_i" do
-      obj.qualifier = [["resource"], ["to_i"]]
-      obj.matcher = "cmp >"
+    it 'constructs a simple resource+argument with to_i' do
+      obj.qualifier = [['resource'], ['to_i']]
+      obj.matcher = 'cmp >'
       obj.expectation = 3
       _(obj.to_ruby).must_equal '
 describe resource.to_i do
@@ -50,11 +52,11 @@ end
 '.strip
     end
 
-    it "constructs a simple resource+argument with array accessors" do
-      obj.qualifier = [["resource"], ["name[2]"]]
-      obj.matcher = "exist"
-      obj.matcher = "eq"
-      obj.expectation = "mytest"
+    it 'constructs a simple resource+argument with array accessors' do
+      obj.qualifier = [['resource'], ['name[2]']]
+      obj.matcher = 'exist'
+      obj.matcher = 'eq'
+      obj.expectation = 'mytest'
       _(obj.to_ruby).must_equal '
 describe resource.name[2] do
   it { should eq "mytest" }
@@ -62,10 +64,10 @@ end
 '.strip
     end
 
-    it "constructs a simple resource+argument with method calls" do
-      obj.qualifier = [["resource"], %w{hello world}]
-      obj.matcher = "eq"
-      obj.expectation = "mytest"
+    it 'constructs a simple resource+argument with method calls' do
+      obj.qualifier = [['resource'], %w[hello world]]
+      obj.matcher = 'eq'
+      obj.expectation = 'mytest'
       _(obj.to_ruby).must_equal '
 describe resource.hello("world") do
   it { should eq "mytest" }
@@ -73,10 +75,10 @@ end
 '.strip
     end
 
-    it "constructs a simple resource+argument with method calls" do
-      obj.qualifier = [["resource"], %w{hello world}]
-      obj.matcher = "be_in"
-      obj.expectation = %w{mytest mytest2 mytest3}
+    it 'constructs a simple resource+argument with method calls' do
+      obj.qualifier = [['resource'], %w[hello world]]
+      obj.matcher = 'be_in'
+      obj.expectation = %w[mytest mytest2 mytest3]
       _(obj.to_ruby).must_equal '
 describe resource.hello("world") do
   it { should be_in ["mytest", "mytest2", "mytest3"] }
@@ -84,11 +86,11 @@ end
 '.strip
     end
 
-    it "constructs a simple resource+argument with method calls" do
-      obj.qualifier = [["resource"], %w{hello world}]
-      obj.matcher = "be_in"
+    it 'constructs a simple resource+argument with method calls' do
+      obj.qualifier = [['resource'], %w[hello world]]
+      obj.matcher = 'be_in'
       obj.negate!
-      obj.expectation = %w{mytest2 mytest3 mytest4}
+      obj.expectation = %w[mytest2 mytest3 mytest4]
       _(obj.to_ruby).must_equal '
 describe resource.hello("world") do
   it { should_not be_in ["mytest2", "mytest3", "mytest4"] }
@@ -96,10 +98,10 @@ end
 '.strip
     end
 
-    it "constructs a simple resource+argument with method calls" do
+    it 'constructs a simple resource+argument with method calls' do
       obj.qualifier = [['["item1","item2","item3"]']]
-      obj.matcher = "be_in"
-      obj.expectation = %w{item1 item2 item3 item4 item5}
+      obj.matcher = 'be_in'
+      obj.expectation = %w[item1 item2 item3 item4 item5]
       _(obj.to_ruby).must_equal '
 describe ["item1","item2","item3"] do
   it { should be_in ["item1", "item2", "item3", "item4", "item5"] }
@@ -107,10 +109,10 @@ end
 '.strip
     end
 
-    it "constructs a simple resource+argument with method calls" do
-      obj.qualifier = [["resource"], [:mode]]
-      obj.matcher = "cmp"
-      obj.expectation = "0755"
+    it 'constructs a simple resource+argument with method calls' do
+      obj.qualifier = [['resource'], [:mode]]
+      obj.matcher = 'cmp'
+      obj.expectation = '0755'
       _(obj.to_ruby).must_equal '
 describe resource do
   its("mode") { should cmp "0755" }
@@ -118,9 +120,9 @@ end
 '.strip
     end
 
-    it "constructs a resource+argument block with method call, matcher and expectation" do
-      obj.qualifier = [["command", "ls /etc"], ["exit_status"]]
-      obj.matcher = "eq"
+    it 'constructs a resource+argument block with method call, matcher and expectation' do
+      obj.qualifier = [['command', 'ls /etc'], ['exit_status']]
+      obj.matcher = 'eq'
       obj.expectation = 0
 
       _(obj.to_ruby).must_equal '
@@ -130,11 +132,11 @@ end
 '.strip
     end
 
-    it "constructs a simple describe with static data, negated regex matcher and expectation" do
+    it 'constructs a simple describe with static data, negated regex matcher and expectation' do
       obj.qualifier = [['"aaa"']]
-      obj.matcher = "match"
+      obj.matcher = 'match'
       obj.negate!
-      obj.expectation = Regexp.new("^aa.*")
+      obj.expectation = Regexp.new('^aa.*')
 
       _(obj.to_ruby).must_equal '
 describe "aaa" do
@@ -143,11 +145,11 @@ end
 '.strip
     end
 
-    it "constructs a resource+argument block without a property call" do
-      obj.qualifier = [%w{service avahi-daemon}]
+    it 'constructs a resource+argument block without a property call' do
+      obj.qualifier = [%w[service avahi-daemon]]
       obj.qualifier.push(["info['properties']['UnitFileState']"])
-      obj.expectation = "enabled"
-      obj.matcher = "eq"
+      obj.expectation = 'enabled'
+      obj.matcher = 'eq'
       _(obj.to_ruby).must_equal '
 describe service("avahi-daemon").info[\'properties\'][\'UnitFileState\'] do
   it { should eq "enabled" }
@@ -155,10 +157,10 @@ end
 '.strip
     end
 
-    it "constructs a simple resource + only_if" do
-      obj.qualifier = [["resource"], ["version"]]
-      obj.matcher = "cmp >="
-      obj.expectation = "2.4.2"
+    it 'constructs a simple resource + only_if' do
+      obj.qualifier = [['resource'], ['version']]
+      obj.matcher = 'cmp >='
+      obj.expectation = '2.4.2'
       obj.only_if = "package('ntp').installed?"
       _(obj.to_ruby).must_equal '
 only_if { package(\'ntp\').installed? }
@@ -169,15 +171,15 @@ end
     end
   end
 
-  describe "Inspec::Object::EachLoop, each_loop" do
-    it "constructs an each loop to match listening addresses" do
+  describe 'Inspec::Object::EachLoop, each_loop' do
+    it 'constructs an each loop to match listening addresses' do
       loop_obj = Inspec::Object::EachLoop.new
-      loop_obj.qualifier = [["port", 25]]
-      loop_obj.qualifier.push(["addresses"])
+      loop_obj.qualifier = [['port', 25]]
+      loop_obj.qualifier.push(['addresses'])
       obj = Inspec::Object::Test.new
-      obj.matcher = "match"
+      obj.matcher = 'match'
       obj.negate!
-      obj.expectation = "0.0.0.0"
+      obj.expectation = '0.0.0.0'
       loop_obj.add_test(obj)
       _(loop_obj.to_ruby).must_equal '
 port(25).addresses.each do |entry|
@@ -189,15 +191,15 @@ end
     end
   end
 
-  describe "Inspec::Object::List" do
-    it "constructs a list filtering test" do
-      list_obj = Inspec::Object::List.new([["passwd"]])
-      list_obj.qualifier.push(["where { user =~ /^(?!root|sync|shutdown|halt).*$/ }"])
+  describe 'Inspec::Object::List' do
+    it 'constructs a list filtering test' do
+      list_obj = Inspec::Object::List.new([['passwd']])
+      list_obj.qualifier.push(['where { user =~ /^(?!root|sync|shutdown|halt).*$/ }'])
 
       obj = Inspec::Object::Test.new
       obj.qualifier = list_obj.qualifier
-      obj.matcher = "be_empty"
-      obj.qualifier.push(["entries"])
+      obj.matcher = 'be_empty'
+      obj.qualifier.push(['entries'])
       obj.negate!
       _(obj.to_ruby).must_equal '
 describe passwd.where { user =~ /^(?!root|sync|shutdown|halt).*$/ } do
@@ -207,11 +209,11 @@ end
     end
   end
 
-  describe "Inspec::Object::OrTest and Inspec::Object::Control" do
+  describe 'Inspec::Object::OrTest and Inspec::Object::Control' do
     let(:obj1) do
       obj1 = Inspec::Object::Test.new
-      obj1.qualifier = [["command", "ls /etc"], ["exit_status"]]
-      obj1.matcher = "eq"
+      obj1.qualifier = [['command', 'ls /etc'], ['exit_status']]
+      obj1.matcher = 'eq'
       obj1.expectation = 0
       obj1
     end
@@ -222,7 +224,7 @@ end
       obj2
     end
 
-    it "constructs a simple describe.one block wrapping two tests" do
+    it 'constructs a simple describe.one block wrapping two tests' do
       or_obj = Inspec::Object::OrTest.new([obj1, obj2])
       _(or_obj.to_ruby).must_equal '
 describe.one do
@@ -236,7 +238,7 @@ end
 '.strip
     end
 
-    it "negates a describe.one block, wow!" do
+    it 'negates a describe.one block, wow!' do
       or_obj = Inspec::Object::OrTest.new([obj1, obj2])
       or_obj.negate!
       _(or_obj.to_ruby).must_equal '
@@ -249,12 +251,12 @@ end
 '.strip
     end
 
-    it "loops a describe.one block, ooooooo!" do
+    it 'loops a describe.one block, ooooooo!' do
       res = Inspec::Object::EachLoop.new
-      res.qualifier.push(["(1..5)"])
+      res.qualifier.push(['(1..5)'])
       # already defined in the let block:
-      obj1.matcher = "eq entity"
-      obj2.matcher = "eq entity"
+      obj1.matcher = 'eq entity'
+      obj2.matcher = 'eq entity'
       obj1.remove_expectation
       obj2.remove_expectation
 
@@ -275,17 +277,17 @@ end
 '.strip
     end
 
-    it "constructs a control" do
+    it 'constructs a control' do
       control = Inspec::Object::Control.new
       control.add_test(obj1)
-      control.id = "sample.control.id"
-      control.title = "Sample Control Important Title"
+      control.id = 'sample.control.id'
+      control.title = 'Sample Control Important Title'
       control.descriptions = {
-        default: "The most critical control the world has ever seen",
-        rationale: "It is needed to save the planet",
-        'more info': "Insert clever joke here",
+        default: 'The most critical control the world has ever seen',
+        rationale: 'It is needed to save the planet',
+        'more info': 'Insert clever joke here'
       }
-      control.refs = ["simple ref", { ref: "title", url: "my url" }]
+      control.refs = ['simple ref', { ref: 'title', url: 'my url' }]
       control.impact = 1.0
       _(control.to_ruby).must_equal '
 control "sample.control.id" do
@@ -303,18 +305,18 @@ end
 '.strip
     end
 
-    it "constructs a control with only_if" do
+    it 'constructs a control with only_if' do
       control = Inspec::Object::Control.new
       control.add_test(obj1)
       control.only_if = "package('ntp').installed?"
-      control.id = "sample.control.id"
-      control.title = "Sample Control Important Title"
+      control.id = 'sample.control.id'
+      control.title = 'Sample Control Important Title'
       control.descriptions = {
-        default: "The most critical control the world has ever seen",
-        rationale: "It is needed to save the planet",
-        'more info': "Insert clever joke here",
+        default: 'The most critical control the world has ever seen',
+        rationale: 'It is needed to save the planet',
+        'more info': 'Insert clever joke here'
       }
-      control.refs = ["simple ref", { ref: "title", url: "my url" }]
+      control.refs = ['simple ref', { ref: 'title', url: 'my url' }]
       control.impact = 1.0
       _(control.to_ruby).must_equal '
 control "sample.control.id" do
@@ -333,7 +335,7 @@ end
 '.strip
     end
 
-    it "constructs a multiline desc in a control with indentation" do
+    it 'constructs a multiline desc in a control with indentation' do
       control = Inspec::Object::Control.new
       control.descriptions[:default] = "Multiline\n  control"
       _(control.to_ruby).must_equal '
@@ -346,21 +348,21 @@ end
 '.strip
     end
 
-    it "ignores empty control descriptions" do
+    it 'ignores empty control descriptions' do
       control = Inspec::Object::Control.new
       x = '
 control nil do
 end
 '.strip
 
-      control.descriptions[:default] = ""
+      control.descriptions[:default] = ''
       _(control.to_ruby).must_equal x
 
       control.descriptions[:default] = nil
       _(control.to_ruby).must_equal x
     end
 
-    it "handles non-string descriptions" do
+    it 'handles non-string descriptions' do
       control = Inspec::Object::Control.new
       control.descriptions[:default] = 123
       _(control.to_ruby).must_equal '
@@ -371,30 +373,30 @@ end
     end
   end
 
-  describe "Inspec::Object::Variable, take #1" do
-    it "constructs a control with variable to instantiate a resource only once" do
+  describe 'Inspec::Object::Variable, take #1' do
+    it 'constructs a control with variable to instantiate a resource only once' do
       control = Inspec::Object::Control.new
-      variable = Inspec::Object::Value.new([["command", "which grep"]])
+      variable = Inspec::Object::Value.new([['command', 'which grep']])
       variable_id = variable.name_variable.to_s
 
       obj1 = Inspec::Object::Test.new
       obj1.variables.push(variable)
       obj1.qualifier.push([variable_id])
-      obj1.qualifier.push(["exit_status"])
-      obj1.matcher = "eq"
+      obj1.qualifier.push(['exit_status'])
+      obj1.matcher = 'eq'
       obj1.expectation = 0
       control.add_test(obj1)
 
       obj2 = Inspec::Object::Test.new
       obj2.qualifier.push([variable_id.to_s])
-      obj2.qualifier.push(["stdout"])
-      obj2.matcher = "contain"
-      obj2.expectation = "grep"
+      obj2.qualifier.push(['stdout'])
+      obj2.matcher = 'contain'
+      obj2.expectation = 'grep'
       control.add_test(obj2)
 
-      control.id = "variable.control.id"
-      control.title = "Variable Control Important Title"
-      control.descriptions[:default] = "The most variable control the world has ever seen"
+      control.id = 'variable.control.id'
+      control.title = 'Variable Control Important Title'
+      control.descriptions[:default] = 'The most variable control the world has ever seen'
       control.impact = 1.0
       _(control.to_ruby).must_equal '
 control "variable.control.id" do
@@ -413,25 +415,25 @@ end
     end
   end
 
-  describe "Inspec::Object::Variable, take #2" do
-    it "constructs a control with variable, loop and var reference" do
+  describe 'Inspec::Object::Variable, take #2' do
+    it 'constructs a control with variable, loop and var reference' do
       control = Inspec::Object::Control.new
       command_value = %r{^/usr/bin/chrony}
-      pid_filter = ">"
+      pid_filter = '>'
       pid_value = 0
       loopy = Inspec::Object::EachLoop.new
-      loopy.qualifier = [["processes", command_value]]
+      loopy.qualifier = [['processes', command_value]]
       loopy.qualifier.push(["where { pid #{pid_filter} #{pid_value} }.entries"])
       obj = loopy.add_test
 
       variable = Inspec::Object::Value.new([['passwd.where { user == "_chrony" }.uids.first']])
       variable_id = variable.name_variable.to_s
       obj.variables.push(variable)
-      obj.qualifier = [["user(entry.user)"], ["uid"]]
+      obj.qualifier = [['user(entry.user)'], ['uid']]
       obj.matcher = "cmp #{variable_id}"
 
       control.add_test(obj)
-      control.id = "variable.control.id"
+      control.id = 'variable.control.id'
       control.impact = 0.1
       _(control.to_ruby).must_equal '
 control "variable.control.id" do
@@ -445,21 +447,21 @@ end
     end
   end
 
-  describe "Inspec::Object::Tag" do
-    it "constructs a tag with key and value" do
+  describe 'Inspec::Object::Tag' do
+    it 'constructs a tag with key and value' do
       control = Inspec::Object::Control.new
 
-      res1 = { name: "key", value: "value" }
+      res1 = { name: 'key', value: 'value' }
       tag1 = Inspec::Object::Tag.new(res1[:name], res1[:value])
       _(tag1.to_hash).must_equal res1
       control.add_tag(tag1)
 
-      res2 = { name: "key2", value: %w{a b} }
+      res2 = { name: 'key2', value: %w[a b] }
       tag2 = Inspec::Object::Tag.new(res2[:name], res2[:value])
       _(tag2.to_hash).must_equal res2
       control.add_tag(tag2)
 
-      control.id = "tag.control.id"
+      control.id = 'tag.control.id'
       _(control.to_ruby).must_equal '
 control "tag.control.id" do
   tag key: "value"
@@ -468,41 +470,74 @@ end
 '.strip
 
       control_hash = {
-        id: "tag.control.id",
+        header: '',
+        id: 'tag.control.id',
         title: nil,
         descriptions: {},
         impact: nil,
         tests: [],
         tags: [{
-          name: "key",
-          value: "value",
+          name: 'key',
+          value: 'value'
         }, {
-          name: "key2",
-          value: %w{a b},
-        }],
+          name: 'key2',
+          value: %w[a b]
+        }]
       }
       _(control.to_hash).must_equal control_hash
     end
   end
 
-  describe "Inspec::Object::Input" do
-    describe "to_ruby method" do
-      it "generates the code for the input" do
-        input = Inspec::Object::Input.new("application_port", description: "The port my application uses", value: 80)
+  describe 'Inspec::Object::Tag' do
+    it 'constructs a control with a company header' do
+      control = Inspec::Object::Control.new
+      res1 = { name: 'key', value: 'value' }
+      tag1 = Inspec::Object::Tag.new(res1[:name], res1[:value])
+      _(tag1.to_hash).must_equal res1
+      control.add_header('# my company header')
+      control.id = 'tag.control.id'
+      control.add_tag(tag1)
+      _(control.to_ruby).must_equal '
+# my company header
+control "tag.control.id" do
+  tag key: "value"
+end
+'.strip
+
+      control_hash = {
+        header: '# my company header',
+        id: 'tag.control.id',
+        title: nil,
+        descriptions: {},
+        impact: nil,
+        tests: [],
+        tags: [{
+          name: 'key',
+          value: 'value'
+        }]
+      }
+      _(control.to_hash).must_equal control_hash
+    end
+  end
+
+  describe 'Inspec::Object::Input' do
+    describe 'to_ruby method' do
+      it 'generates the code for the input' do
+        input = Inspec::Object::Input.new('application_port', description: 'The port my application uses', value: 80)
 
         ruby_code = input.to_ruby
-        _(ruby_code).must_include "attr_application_port = " # Should assign to a var
+        _(ruby_code).must_include 'attr_application_port = ' # Should assign to a var
         # Should have the DSL call. This should be attribute(), not input(), for the
         # foreseeable future, to maintain backwards compatibility.
         _(ruby_code).must_include "attribute('application_port'"
-        _(ruby_code).must_include "value: 80"
-        _(ruby_code).must_include "default: 80"
+        _(ruby_code).must_include 'value: 80'
+        _(ruby_code).must_include 'default: 80'
         _(ruby_code).must_include "description: 'The port my application uses'"
 
         # Try to eval the code to verify that the generated code was valid ruby.
         # Note that the input() method is part of the DSL, so we need to
         # alter the call into something that can respond - the constructor will do
-        ruby_code_for_eval = ruby_code.sub(/attribute\(/, "Inspec::Object::Input.new(")
+        ruby_code_for_eval = ruby_code.sub(/attribute\(/, 'Inspec::Object::Input.new(')
 
         # This will throw exceptions if there is a problem
         new_attr = eval(ruby_code_for_eval) # rubocop:disable Security/Eval # Could use ripper!
@@ -510,26 +545,26 @@ end
       end
     end
 
-    # TODO - deprecate this, not sure it is used
-    describe "to_hash method" do
-      it "generates a similar hash" do
+    # TODO: - deprecate this, not sure it is used
+    describe 'to_hash method' do
+      it 'generates a similar hash' do
         ipt = Inspec::Object::Input.new(
-          "some_attr",
-          description: "The port my application uses",
+          'some_attr',
+          description: 'The port my application uses',
           value: 80,
-          identifier: "app_port",
+          identifier: 'app_port',
           required: false,
-          type: "numeric"
+          type: 'numeric'
         )
         expected = {
-          name: "some_attr",
+          name: 'some_attr',
           options: {
-            description: "The port my application uses",
+            description: 'The port my application uses',
             value: 80,
-            identifier: "app_port",
+            identifier: 'app_port',
             required: false,
-            type: "Numeric", # This gets normalized
-          },
+            type: 'Numeric' # This gets normalized
+          }
         }
         _(ipt.to_hash).must_equal expected
       end
