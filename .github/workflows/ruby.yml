@@ -34,4 +34,4 @@ jobs:
     - name: Run tests
       run: |
         bundle exec chefstyle -a
-        bundle exec unit
+        bundle exec rake unit
