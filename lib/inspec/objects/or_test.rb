@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Inspec::Object
   class OrTest
     attr_reader :tests
@@ -18,12 +20,11 @@ module Inspec::Object
       if @negated
         # We don't use the describe.one wrapper when negated because:
         # !(test1 || test2)     same as    (!test1 && !test2)    where && is implicit in inspec
-        all_tests = @tests.map do |test|
+        @tests.map do |test|
           test.negate!
           test
         end.map(&:to_ruby).join("\n")
 
-        all_tests
       else
         all_tests = @tests.map(&:to_ruby).join("\n").gsub("\n", "\n  ")
 

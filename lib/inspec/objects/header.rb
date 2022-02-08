@@ -10,7 +10,7 @@ module Inspec::Object
 
     def to_hash
       {
-        header: header
+        header: header,
       }
     end
 

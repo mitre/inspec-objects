@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Inspec::Object
   class Test
     attr_accessor :qualifier, :matcher, :expectation, :skip, :negated, :variables, :only_if
@@ -39,7 +41,7 @@ module Inspec::Object
     private
 
     def describe_chain
-      return nil if @qualifier.empty?
+      return if @qualifier.empty?
 
       resource = @qualifier.length > 1 ? @qualifier[0..-2] : [@qualifier[0]]
       res = resource.map { |q| ruby_qualifier(q) }.join(".")
@@ -75,7 +77,7 @@ module Inspec::Object
                 " " + expectation.inspect
               end
       format("%s%sdescribe %s do\n  %s { should%s %s%s }\nend",
-        only_if_clause, vars, res, itsy, naughty, matcher, xpect)
+             only_if_clause, vars, res, itsy, naughty, matcher, xpect)
     end
 
     def rb_skip

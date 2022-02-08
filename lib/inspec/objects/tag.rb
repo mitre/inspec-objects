@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Inspec::Object
   class Tag
     attr_accessor :key, :value

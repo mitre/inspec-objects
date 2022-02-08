@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Inspec::Object
   class List < Value
     def map

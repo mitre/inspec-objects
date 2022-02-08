@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Inspec::Object
   module RubyHelper
     def ruby_qualifier(q)
