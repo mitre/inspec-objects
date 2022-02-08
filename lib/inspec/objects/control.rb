@@ -36,18 +36,13 @@ module Inspec::Object
     end
 
     def to_ruby
-      if header.empty? || header.nil? || header == []
-        res = ["control #{id.inspect} do"]
-      else
-        res = []
-        res.push header
-        res.push "control #{id.inspect} do"
-      end
+      res = []
+      res.push header unless header.nil? || header.empty?
+      res.push "control #{id.inspect} do"
       res.push "  title #{title.inspect}" unless title.to_s.empty?
       descriptions.each do |label, text|
         if label == :default
           next if text.nil? || (text == '') # don't render empty/nil desc
-
           res.push "  desc  #{prettyprint_text(text, 2)}"
         else
           res.push "  desc  #{label.to_s.inspect}, #{prettyprint_text(text, 2)}"
