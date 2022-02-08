@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Inspec::Object
   class Describe
     # Internal helper to structure test objects.
@@ -11,11 +13,11 @@ module Inspec::Object
       def to_ruby
         itsy = "it"
         unless its.nil?
-          if its.is_a? Array
-            itsy = "its(" + its.inspect + ")"
-          else
-            itsy = "its(" + its.to_s.inspect + ")"
-          end
+          itsy = if its.is_a? Array
+                   "its(" + its.inspect + ")"
+                 else
+                   "its(" + its.to_s.inspect + ")"
+                 end
         end
         naughty = negated ? "_not" : ""
         xpect = if expectation.nil?
@@ -72,7 +74,7 @@ module Inspec::Object
     end
 
     def resource
-      return nil if qualifier.empty? || qualifier[0].empty? || qualifier[0][0].empty?
+      return if qualifier.empty? || qualifier[0].empty? || qualifier[0][0].empty?
 
       qualifier[0][0]
     end

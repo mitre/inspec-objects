@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require "spec_helper"
 require "inspec-objects"
 
@@ -468,6 +470,7 @@ end
 '.strip
 
       control_hash = {
+        header: "",
         id: "tag.control.id",
         title: nil,
         descriptions: {},
@@ -498,6 +501,7 @@ end
   '.strip
 
       control_hash = {
+        header: "",
         id: "tag.control.id",
         title: nil,
         descriptions: {},
@@ -539,6 +543,7 @@ control "tag.control.id" do
 end
 ).strip
       control_hash = {
+        header: "",
         id: "tag.control.id",
         title: nil,
         descriptions: {},
@@ -546,6 +551,39 @@ end
         tests: [],
         tags: [],
         post_body: "unless package('gnome-settings-daemon').installed?\n  impact 0.0\n  describe \"The system does not have GNOME installed\" do\n    skip \"The system does not have GNOME installed, this requirement is Not Applicable.\"\n  end\nelse \n  describe command(\"gsettings get org.gnome.settings-daemon.media-keys logout\") do\n    its('stdout.strip') { should cmp \"''\" }\n  end \nend",
+      }
+      _(control.to_hash).must_equal control_hash
+    end
+  end
+
+  describe "Inspec::Object::Tag" do
+    it "constructs a control with a company header" do
+      control = Inspec::Object::Control.new
+      res1 = { name: "key", value: "value" }
+      tag1 = Inspec::Object::Tag.new(res1[:name], res1[:value])
+      _(tag1.to_hash).must_equal res1
+      control.add_header("# my company header")
+      control.id = "tag.control.id"
+      control.add_tag(tag1)
+      _(control.to_ruby).must_equal '
+# my company header
+control "tag.control.id" do
+  tag key: "value"
+end
+'.strip
+
+      control_hash = {
+        header: "# my company header",
+        id: "tag.control.id",
+        title: nil,
+        descriptions: {},
+        impact: nil,
+        tests: [],
+        tags: [{
+          name: "key",
+          value: "value",
+        }],
+        post_body: "",
       }
       _(control.to_hash).must_equal control_hash
     end
@@ -576,7 +614,7 @@ end
       end
     end
 
-    # TODO - deprecate this, not sure it is used
+    # TODO: - deprecate this, not sure it is used
     describe "to_hash method" do
       it "generates a similar hash" do
         ipt = Inspec::Object::Input.new(

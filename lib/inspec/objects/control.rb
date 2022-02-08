@@ -2,13 +2,18 @@
 
 module Inspec::Object
   class Control
-    attr_accessor :id, :title, :descriptions, :impact, :tests, :post_body, :tags, :refs, :only_if
+    attr_accessor :header, :id, :title, :descriptions, :impact, :tests, :post_body, :tags, :refs, :only_if
     def initialize
+      @header = ""
       @tests = []
       @tags = []
       @refs = []
       @descriptions = {}
       @post_body = ""
+    end
+
+    def add_header(header)
+      @header = header
     end
 
     def add_test(t)
@@ -25,6 +30,7 @@ module Inspec::Object
 
     def to_hash
       {
+        header: header,
         id: id,
         title: title,
         descriptions: descriptions,
@@ -36,7 +42,9 @@ module Inspec::Object
     end
 
     def to_ruby
-      res = ["control #{id.inspect} do"]
+      res = []
+      res.push header unless header.nil? || header.empty?
+      res.push "control #{id.inspect} do"
       res.push "  title #{title.inspect}" unless title.to_s.empty?
       descriptions.each do |label, text|
         if label == :default

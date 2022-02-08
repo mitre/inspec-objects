@@ -1,8 +1,9 @@
+# frozen_string_literal: true
+
 require "inspec/input"
 
 module Inspec::Object
   class Input < ::Inspec::Input
-
     # NOTE: No initialize method or accessors for the reasons listed above
 
     #--------------------------------------------------------------------------#
