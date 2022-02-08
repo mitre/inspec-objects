@@ -33,5 +33,5 @@ jobs:
         bundler-cache: true # runs 'bundle install' and caches installed gems automatically
     - name: Run tests
       run: |
-        - bundle exec cookstyle
+        - bundle exec chefstyle -a
         - bundle exec unit
