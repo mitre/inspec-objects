@@ -10,7 +10,7 @@ module Inspec::Object
 
     def to_hash
       {
-        post_body: post_body
+        post_body: post_body,
       }
     end
 
